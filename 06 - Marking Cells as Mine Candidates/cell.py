@@ -5,6 +5,8 @@ import ctypes
 import sys
 
 class Cell:
+    current_left_click=None
+    all_new=[]
     all = []
     cell_count = settings.CELL_COUNT
     cell_count_label_object = None
@@ -41,6 +43,11 @@ class Cell:
         Cell.cell_count_label_object = lbl
 
     def left_click_actions(self, event):
+        Cell.current_left_click = Cell.all.index(self)
+        if Cell.cell_count == settings.CELL_COUNT:
+            if self.is_mine:
+                Cell.randomize_mines_remove_current_click()
+
         if self.is_mine:
             self.show_mine()
         else:
@@ -130,6 +137,15 @@ class Cell:
         )
         for picked_cell in picked_cells:
             picked_cell.is_mine = True
+
+    @staticmethod
+    def randomize_mines_remove_current_click():
+        print(Cell.all[Cell.current_left_click].is_mine)
+        Cell.all[Cell.current_left_click].is_mine=False
+        Cell.all_new = Cell.all
+        Cell.all.remove(Cell.all[Cell.current_left_click])
+        Cell.randomize_mines()
+        Cell.all = Cell.all_new
 
     def __repr__(self):
         return f"Cell({self.x}, {self.y})"
